@@ -56,26 +56,27 @@ namespace IntegerCalcVirtuplex
             string inputFilepath = RequestOpenFileDialog();
             string outputFilepath = RequestSaveFileDialog();
 
-            if (string.IsNullOrEmpty(inputFilepath) && string.IsNullOrEmpty(outputFilepath))
+            if (string.IsNullOrEmpty(inputFilepath) || string.IsNullOrEmpty(outputFilepath))
+                return;
+
+            if (inputFilepath == outputFilepath)
             {
-                if (inputFilepath == outputFilepath)
-                {
-                    MessageBox.Show("Input and output should be two different files");
-                    return;
-                }
-
-                var btn = sender as Button;
-                btn.IsEnabled = false;
-
-                var progressBar = this.FindName("progressBarImport") as ProgressBar;
-                progressBar.IsIndeterminate = true;
-
-                await Task.Run(() => Calculator.CalculateFromFile(inputFilepath, outputFilepath));
-
-                btn.IsEnabled = true;
-                progressBar.IsIndeterminate = false;
-                MessageBox.Show("Calculation from file completed");
+                MessageBox.Show("Input and output should be two different files");
+                return;
             }
+
+            var btn = sender as Button;
+            btn.IsEnabled = false;
+
+            var progressBar = this.FindName("progressBarImport") as ProgressBar;
+            progressBar.IsIndeterminate = true;
+
+            await Task.Run(() => Calculator.CalculateFromFile(inputFilepath, outputFilepath));
+
+            btn.IsEnabled = true;
+            progressBar.IsIndeterminate = false;
+            MessageBox.Show("Calculation from file completed");
+
         }
 
         private string RequestOpenFileDialog()
@@ -88,8 +89,8 @@ namespace IntegerCalcVirtuplex
             {
                 return inputFileDialog.FileName;
             }
-            else
-                return string.Empty;
+
+            return string.Empty;
         }
 
         private string RequestSaveFileDialog()
@@ -102,8 +103,8 @@ namespace IntegerCalcVirtuplex
             {
                 return outputFileDialog.FileName;
             }
-            else
-                return string.Empty;
+
+            return string.Empty;
         }
 
         private void UpdateLabel()
